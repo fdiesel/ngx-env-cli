@@ -1,0 +1,22 @@
+{
+  "name": "ngx-env-cli",
+  "version": "1.0.0",
+  "description": "CLI for managing environment variables in angular",
+  "main": "index.ts",
+  "bin": {
+    "ngx-env": "./dist/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "fdiesel",
+  "license": "ISC",
+  "dependencies": {
+    "case": "^1.6.3",
+    "commander": "^11.0.0",
+    "typescript": "^5.1.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20.4.5"
+  }
+}

@@ -7,17 +7,20 @@ import {
 
 export abstract class File {
   protected readonly path: PathOrFileDescriptor;
+  protected readonly regexp: string | RegExp;
   protected readonly defaultContent: string;
   protected readonly contentPrefix: string;
   protected readonly contentSuffix: string;
 
   constructor(
     path: PathOrFileDescriptor,
+    regexp: string | RegExp,
     defaultContent: string,
     contentPrefix: string,
     contentSuffix: string
   ) {
     this.path = path;
+    this.regexp = regexp;
     this.defaultContent = defaultContent;
     this.contentPrefix = contentPrefix;
     this.contentSuffix = contentSuffix;

@@ -20,4 +20,13 @@ export function init(): void {
   if (envFiles.length === 0) {
     new EnvOtherFile('environments/environment.development.ts').init();
   }
+  console.log(
+    `add '<script src="assets/env.js"></script>' to your scripts in index.html`
+  );
+  console.log(
+    `use command 'envsubst < assets/env.template.js > assets/env.js' when starting the application`
+  );
+  console.log(
+    `docker nginx example: 'CMD ["/bin/sh",  "-c",  "envsubst < /usr/share/nginx/html/assets/env.template.js > /usr/share/nginx/html/assets/env.js && exec nginx -g 'daemon off;'"]'`
+  );
 }

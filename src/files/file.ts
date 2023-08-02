@@ -38,6 +38,9 @@ export abstract class File<Content> {
       mkdirSync(dirname(this.path.toString()), { recursive: true });
       const text = this.serializeContent(this.defaultContent);
       writeFileSync(this.path, text, { flag: 'w' });
+      console.log(`create file '${this.path}'`);
+    } else {
+      console.log(`file '${this.path}' exists`);
     }
   }
 

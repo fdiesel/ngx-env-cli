@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "group": "build",
+      "label": "build",
+      "command": "./node_modules/.bin/tsc",
+      "presentation": {
+        "reveal": "always",
+        "clear": true,
+        "close": true
+      }
+    }
+  ]
+}

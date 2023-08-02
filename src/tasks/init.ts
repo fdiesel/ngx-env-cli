@@ -11,10 +11,8 @@ function mkDirIfNotExists(dir: string): void {
 }
 
 export function init(): void {
-  mkDirIfNotExists('assets');
   new AssetsEnvFile().init();
   new AssetsEnvTemplateFile().init();
-  mkDirIfNotExists('environments');
   new EnvProdFile().init();
   const envFiles = readdirSync('environments', { withFileTypes: true })
     .map((file) => file.name)

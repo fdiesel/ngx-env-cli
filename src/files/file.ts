@@ -1,83 +1,59 @@
 import {
   PathOrFileDescriptor,
   existsSync,
+  mkdirSync,
   readFileSync,
   writeFileSync
 } from 'fs';
+import { dirname } from 'path';
 
-export abstract class File {
-  protected readonly path: PathOrFileDescriptor;
-  protected readonly regexp: string | RegExp;
-  protected readonly defaultContent: string;
-  protected readonly contentPrefix: string;
-  protected readonly contentSuffix: string;
+export abstract class File<Content> {
+  public readonly path: PathOrFileDescriptor;
+  public readonly regexp: string | RegExp;
+  public readonly defaultContent: Content;
 
   constructor(
     path: PathOrFileDescriptor,
     regexp: string | RegExp,
-    defaultContent: string,
-    contentPrefix: string,
-    contentSuffix: string
+    defaultContent: Content
   ) {
     this.path = path;
     this.regexp = regexp;
     this.defaultContent = defaultContent;
-    this.contentPrefix = contentPrefix;
-    this.contentSuffix = contentSuffix;
   }
 
-  protected abstract parseLine(name: string, value: any): string;
-  protected abstract includes(name: string): string;
+  protected abstract deserializeContent(text: string): Content;
+  protected abstract serializeContent(content: Content): string;
+  protected abstract serializeName(name: string): string;
+  protected abstract serializeValue(name: string, value: string): string;
+  public abstract add(name: string, value: any): void;
+  public abstract remove(name: string): void;
 
   protected parseValue(value: any): string {
     return typeof value === 'string' ? `'${value}'` : value;
   }
 
-  private getContentPosition(lines: string[]): { start: number; end: number } {
-    const start = lines.findIndex((line) => line.includes(this.contentPrefix));
-    let end = start;
-    for (let i = start; i < lines.length; i++) {
-      if (lines[i].includes(this.contentSuffix)) {
-        end = i;
-        break;
-      }
-    }
-    return { start, end };
-  }
-
   public init(): void {
     if (!existsSync(this.path.toString())) {
-      writeFileSync(this.path, this.defaultContent, { flag: 'w' });
+      mkdirSync(dirname(this.path.toString()), { recursive: true });
+      const text = this.serializeContent(this.defaultContent);
+      writeFileSync(this.path, text, { flag: 'w' });
     }
   }
 
-  public add(name: string, value: any): void {
-    const lines = this.read();
-    const contentPosition = this.getContentPosition(lines);
-    if (
-      contentPosition.end > contentPosition.start + 1 &&
-      !lines[contentPosition.end - 1].endsWith(',') &&
-      !lines[contentPosition.end - 1].endsWith(';')
-    ) {
-      lines[contentPosition.end - 1] += ',';
-    }
-    lines.splice(contentPosition.end, 0, '  ' + this.parseLine(name, value));
-    this.write(lines);
+  public read(): { text: string; content: Content } {
+    const text = readFileSync(this.path).toString();
+    const sigText = text.match(this.regexp)![1];
+    const content = this.deserializeContent(sigText);
+    return { text, content };
   }
 
-  public remove(name: string): void {
-    const lines = this.read();
-    const filteredLines = lines.filter(
-      (line) => !line.includes(this.includes(name))
+  public write(oldText: string, content: any): void {
+    const newSigText = this.serializeContent(content).replace(
+      /"(window\['env'\]\[.+\] \|\| .+)"/,
+      '$1'
     );
-    this.write(filteredLines);
-  }
-
-  protected read(): string[] {
-    return readFileSync(this.path).toString().split('\n');
-  }
-
-  protected write(lines: string[]): void {
-    writeFileSync(this.path, lines.join('\n') + '\n');
+    const newText = oldText.replace(this.regexp, newSigText);
+    writeFileSync(this.path, newText);
   }
 }

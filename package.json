@@ -2,6 +2,10 @@
   "name": "ngx-env-cli",
   "version": "1.0.0",
   "description": "CLI for managing environment variables in angular",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fdiesel/ngx-env-cli"
+  },
   "main": "./src/index.ts",
   "bin": {
     "ngx-env": "./dist/index.js"

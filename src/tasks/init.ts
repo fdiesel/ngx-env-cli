@@ -1,12 +1,12 @@
-import fs, { readdirSync } from 'fs';
+import { existsSync, mkdirSync, readdirSync } from 'fs';
 import { AssetsEnvFile } from '../files/assets-env-file';
 import { AssetsEnvTemplateFile } from '../files/assets-env-template-file';
 import { EnvOtherFile } from '../files/env-other-file';
 import { EnvProdFile } from '../files/env-prod-file';
 
 function mkDirIfNotExists(dir: string): void {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
+  if (!existsSync(dir)) {
+    mkdirSync(dir);
   }
 }
 
